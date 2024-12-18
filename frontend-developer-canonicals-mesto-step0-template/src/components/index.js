@@ -1,6 +1,16 @@
+import '../pages/index.css';
+import avatarUrl from '../images/avatar.jpg';
+import { enableValidation } from "./validate";
+import { createCard } from './card';
+import { initialCards } from './cards';
+import { openModal, closeModal, closePopupOverlay } from './modal';
+
+const profileImage = document.querySelector('.profile__image');
+profileImage.style.backgroundImage = `url(${avatarUrl})`;
+
 const profilePopup = document.querySelector(".popup_type_edit");
 const cardPopup = document.querySelector(".popup_type_new-card");
-const imagePopup = document.querySelector(".popup_type_image");
+export const imagePopup = document.querySelector(".popup_type_image");
 
 profilePopup.classList.add("popup_is-animated");
 cardPopup.classList.add("popup_is-animated");
@@ -34,47 +44,11 @@ function handleProfileFormSubmit(evt) {
 }
 profileFormElement.addEventListener('submit', handleProfileFormSubmit);
 
-
-function openModal(popup) {
-    popup.classList.add('popup_is-opened');
-}
-function closeModal(popup) {
-    popup.classList.toggle("popup_is-opened");
-}
-
-const imageOfImagePopup = imagePopup.querySelector(".popup__image");
-const captionOfImagePopup = imagePopup.querySelector(".popup__caption");
 const closeImagePopupButton = imagePopup.querySelector(".popup__close");
 
 closeImagePopupButton.addEventListener("click", function () {
     closeModal(imagePopup);
 })
-
-const createCard = function (itemName, itemLink) {
-    const cardTemplate = document.querySelector("#card-template").content;
-    const newCard = cardTemplate.cloneNode(true);
-    newCard.querySelector(".card__image").src = itemLink;
-    newCard.querySelector(".card__title").textContent = itemName;
-
-    const likeButton = newCard.querySelector(".card__like-button");
-    likeButton.addEventListener("click", function () {
-        likeButton.classList.toggle("card__like-button_is-active");
-    })
-
-    const deleteButton = newCard.querySelector(".card__delete-button");
-    deleteButton.addEventListener("click", function () {
-        const elementToDelete = deleteButton.closest(".places__item");
-        elementToDelete.remove();
-    })
-
-    const imageOfCard = newCard.querySelector(".card__image");
-    imageOfCard.addEventListener("click", function(){
-        imageOfImagePopup.src = itemLink;
-        captionOfImagePopup.textContent = itemName;
-        openModal(imagePopup);
-    })
-    return newCard;
-};
 
 const placesList = document.querySelector(".places__list");
 const buttonAddCard = document.querySelector(".profile__add-button");
@@ -110,3 +84,25 @@ function handleCardFormSubmit(evt) {
     urlPlaceInput.value = "";
 }
 cardFormElement.addEventListener('submit', handleCardFormSubmit);
+
+const validationSettings = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+}
+enableValidation(validationSettings);
+
+profilePopup.addEventListener("click", (evt) => {
+    closePopupOverlay(evt, profilePopup);
+});
+
+cardPopup.addEventListener("click", (evt) => {
+    closePopupOverlay(evt, cardPopup);
+});
+
+imagePopup.addEventListener("click", (evt) => {
+    closePopupOverlay(evt, imagePopup);
+});
